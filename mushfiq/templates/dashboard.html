@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Dashboard</h2>
+<p>Choose an action:</p>
+<ul class="list-group">
+  <li class="list-group-item"><a href="{{ url_for('upload_file') }}">Upload a File</a></li>
+  <li class="list-group-item"><a href="{{ url_for('create_folder') }}">Create a Folder</a></li>
+  <li class="list-group-item"><a href="{{ url_for('get_account_info') }}">Get Account Info</a></li>
+</ul>
+{% endblock %}
