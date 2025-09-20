@@ -86,14 +86,47 @@ def callback():
         return redirect(url_for('index'))
 
 
-@app.route('/dashboard')
-def dashboard():
-    """Dashboard showing available POST operations"""
+# @app.route('/dashboard')
+# def dashboard():
+#     """Dashboard showing available POST operations"""
+#     if not access_token:
+#         flash('Please authorize first', 'error')
+#         return redirect(url_for('index'))
+#
+#     return render_template('dashboard.html')
+
+@app.route('/dashboard', defaults={'path': ''})
+@app.route('/dashboard/<path:path>')
+def dashboard(path):
     if not access_token:
         flash('Please authorize first', 'error')
         return redirect(url_for('index'))
 
-    return render_template('dashboard.html')
+    list_url = "https://api.dropboxapi.com/2/files/list_folder"
+
+    data = {
+        "path": f"/{path}" if path else "",
+        "recursive": False
+    }
+
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Content-Type': 'application/json'
+    }
+
+    try:
+        response = requests.post(list_url, headers=headers, json=data)
+
+        if response.status_code == 200:
+            items = response.json().get("entries", [])
+            return render_template('dashboard.html', items=items, current_path=path)
+        else:
+            flash(f"Failed to fetch folder contents: {response.text}", 'error')
+            return redirect(url_for('index'))
+    except Exception as e:
+        flash(f"Error fetching folder contents: {str(e)}", 'error')
+        return redirect(url_for('index'))
+
 
 
 @app.route('/upload_file', methods=['GET', 'POST'])

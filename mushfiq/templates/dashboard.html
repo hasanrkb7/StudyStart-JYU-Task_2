@@ -2,9 +2,32 @@
 {% block content %}
 <h2>Dashboard</h2>
 <p>Choose an action:</p>
-<ul class="list-group">
+<ul class="list-group mb-4">
   <li class="list-group-item"><a href="{{ url_for('upload_file') }}">Upload a File</a></li>
   <li class="list-group-item"><a href="{{ url_for('create_folder') }}">Create a Folder</a></li>
   <li class="list-group-item"><a href="{{ url_for('get_account_info') }}">Get Account Info</a></li>
+</ul>
+
+<hr>
+
+<h3>Dropbox Files & Folders</h3>
+
+{% if current_path %}
+<p><strong>Current path:</strong> /{{ current_path }}</p>
+<a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-sm mb-3">⬅ Back to Root</a>
+{% endif %}
+
+<ul class="list-group">
+  {% for item in items %}
+    {% if item['.tag'] == 'folder' %}
+      <li class="list-group-item">
+        📁 <a href="{{ url_for('dashboard', path=current_path ~ '/' ~ item['name'] if current_path else item['name']) }}">
+          {{ item['name'] }}
+        </a>
+      </li>
+    {% else %}
+      <li class="list-group-item">📄 {{ item['name'] }}</li>
+    {% endif %}
+  {% endfor %}
 </ul>
 {% endblock %}
