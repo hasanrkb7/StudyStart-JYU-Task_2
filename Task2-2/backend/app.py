@@ -311,6 +311,49 @@ def delete_file():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/api/rename', methods=['PUT'])
+def rename():
+    if not access_token:
+        return jsonify({"error": "Authorize"}), 401
+    
+    data = request.get_json()
+    old_path = data.get('old_path')
+    new_name = data.get('new_name')
+
+    if not old_path or not new_name:
+        return jsonify({"error": "old_path and new_name are required"}), 400
+    
+    if not old_path.startswith('/'):
+        old_path = '/' + old_path
+
+    folder_path = os.path.dirname(old_path)
+    if folder_path == '/':
+        folder_path = ''  
+    new_path = f"{folder_path}/{new_name}"
+
+    url = "https://api.dropboxapi.com/2/files/move_v2"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "from_path": old_path,
+        "to_path": new_path,
+        "allow_shared_folder": True,
+        "autorename": False,
+        "allow_ownership_transfer": False
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=payload)
+        if response.status_code == 200:
+            result = response.json()
+            return jsonify({"message": f'Renamed to: {result["metadata"]["name"]}'})
+        else:
+            return jsonify({"error": response.text}), response.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

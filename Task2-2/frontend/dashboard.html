@@ -29,11 +29,19 @@
           📄 {{ item['name'] }}
         {% endif %}
       </span>
-      <button class="btn btn-danger btn-sm" 
-        data-path="{{ (current_path ~ '/' if current_path else '') ~ item['name'] }}"
-        onclick="deleteItem(this.getAttribute('data-path'))">
-        Delete
-      </button>
+      <div class="btn-group btn-group-sm">
+        <button class="btn btn-warning rounded"
+                data-path="{{ (current_path ~ '/' if current_path else '') ~ item['name'] }}"
+                onclick="renameItem(this.getAttribute('data-path'))">
+          Rename
+        </button>
+        <button class="btn btn-danger rounded"
+                style="margin-left: 10px;"
+                data-path="{{ (current_path ~ '/' if current_path else '') ~ item['name'] }}"
+                onclick="deleteItem(this.getAttribute('data-path'))">
+          Delete
+        </button>
+      </div>
     </li>
   {% endfor %}
 </ul>
@@ -53,6 +61,29 @@ async function deleteItem(path) {
     if (res.ok) {
       alert(data.message);
       location.reload(); // refresh the page
+    } else {
+      alert(`Error: ${data.error}`);
+    }
+  } catch (err) {
+    alert(`Error: ${err}`);
+  }
+}
+
+async function renameItem(oldPath) {
+  const newName = prompt(`Enter new name for "${oldPath}":`);
+  if (!newName) return;
+
+  try {
+    const res = await fetch('/api/rename', {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ old_path: oldPath, new_name: newName })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message);
+      location.reload();
     } else {
       alert(`Error: ${data.error}`);
     }
