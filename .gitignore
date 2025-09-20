@@ -29,7 +29,6 @@ src/styles/
 *.html
 *.css
 client/
-frontend/
 www/
 static/
 assets/
