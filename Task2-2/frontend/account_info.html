@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Dropbox Account Information</h2>
+<ul class="list-group">
+  <li class="list-group-item"><strong>Name:</strong> {{ account.name.display_name }}</li>
+  <li class="list-group-item"><strong>Email:</strong> {{ account.email }}</li>
+  <li class="list-group-item"><strong>Account ID:</strong> {{ account.account_id }}</li>
+</ul>
+<a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-3">Back to Dashboard</a>
+{% endblock %}

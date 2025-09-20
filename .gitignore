@@ -26,9 +26,8 @@ public/
 src/components/
 src/pages/
 src/styles/
-*.html
 *.css
-client/
+client/gi
 www/
 static/
 assets/

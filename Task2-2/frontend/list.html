@@ -1,0 +1,41 @@
+{% for e in entries %}
+          <tr>
+            <td>{{ e.tag }}</td>
+            <td>{{ e.name }}</td>
+            <td class="path">{{ e.path_display }}</td>
+            <td>{% if e.tag == 'file' %}{{ e.size }}{% endif %}</td>
+            <td>{% if e.tag == 'file' %}{{ e.server_modified }}{% endif %}</td>
+            <td>
+              {% if e.tag == 'folder' %}
+                <a class="btn" href="{{ url_for('list_items', path=e.path_display) }}">Open</a>
+                <button class="btn btn-danger btn-sm" onclick="deleteItem('{{ e.path_display }}')">Delete</button>
+              {% else %}
+                <button class="btn btn-danger btn-sm" onclick="deleteItem('{{ e.path_display }}')">Delete</button>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+
+<script>
+async function deleteItem(path) {
+  if (!confirm(`Are you sure you want to delete "${path}"?`)) return;
+
+  try {
+    const res = await fetch('/api/delete_file', {
+      method: 'DELETE',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({file_path: path})
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message);
+      location.reload();
+    } else {
+      alert(`Error: ${data.error}`);
+    }
+  } catch (err) {
+    alert(`Error: ${err}`);
+  }
+}
+</script>

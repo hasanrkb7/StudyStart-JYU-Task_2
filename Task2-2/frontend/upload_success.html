@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>File Uploaded Successfully</h2>
+<p><strong>Name:</strong> {{ file_info.name }}</p>
+<p><strong>Path:</strong> {{ file_info.path_display }}</p>
+<a href="{{ url_for('dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+{% endblock %}

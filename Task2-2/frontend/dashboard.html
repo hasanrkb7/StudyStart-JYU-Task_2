@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Dashboard</h2>
+<p>Choose an action:</p>
+<ul class="list-group mb-4">
+  <li class="list-group-item"><a href="{{ url_for('upload_file') }}">Upload a File</a></li>
+  <li class="list-group-item"><a href="{{ url_for('create_folder') }}">Create a Folder</a></li>
+  <li class="list-group-item"><a href="{{ url_for('get_account_info') }}">Get Account Info</a></li>
+</ul>
+
+<hr>
+
+<h3>Dropbox Files & Folders</h3>
+
+{% if current_path %}
+<p><strong>Current path:</strong> /{{ current_path }}</p>
+<a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-sm mb-3">⬅ Back to Root</a>
+{% endif %}
+
+<ul class="list-group">
+  {% for item in items %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span>
+        {% if item['.tag'] == 'folder' %}
+          📁 <a href="{{ url_for('dashboard', path=current_path ~ '/' ~ item['name'] if current_path else item['name']) }}">
+            {{ item['name'] }}
+          </a>
+        {% else %}
+          📄 {{ item['name'] }}
+        {% endif %}
+      </span>
+      <button class="btn btn-danger btn-sm" 
+        data-path="{{ (current_path ~ '/' if current_path else '') ~ item['name'] }}"
+        onclick="deleteItem(this.getAttribute('data-path'))">
+        Delete
+      </button>
+    </li>
+  {% endfor %}
+</ul>
+
+<script>
+async function deleteItem(path) {
+  if (!confirm(`Are you sure you want to delete ${path}?`)) return;
+
+  try {
+    const res = await fetch('/api/delete_file', {
+      method: 'DELETE',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({file_path: path})
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message);
+      location.reload(); // refresh the page
+    } else {
+      alert(`Error: ${data.error}`);
+    }
+  } catch (err) {
+    alert(`Error: ${err}`);
+  }
+}
+</script>
+{% endblock %}
+
