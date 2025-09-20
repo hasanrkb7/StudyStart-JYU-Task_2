@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="method-info">
+    <h3>POST Method Implementation</h3>
+    <p><span class="post-indicator">POST</span> This application demonstrates various POST method calls to the Dropbox API:</p>
+    <ul>
+        <li><strong>Token Exchange:</strong> POST request to exchange authorization code for access token</li>
+        <li><strong>File Upload:</strong> POST request to upload files to Dropbox</li>
+        <li><strong>Folder Creation:</strong> POST request to create new folders</li>
+        <li><strong>Account Info:</strong> POST request to retrieve account information</li>
+    </ul>
+</div>
+
+<div style="text-align: center;">
+    <h2>Welcome to StudyStart JYU Dropbox Client</h2>
+    <p>This is the POST method implementation for Task 2.2</p>
+    
+    <div style="margin: 30px 0;">
+        <h3>Step 1: Authorization</h3>
+        <p>Click the button below to start the OAuth flow (this will redirect you to Dropbox for authorization)</p>
+        <a href="{{ url_for('authorize') }}" class="btn btn-success">
+            Start Authorization Process
+        </a>
+    </div>
+    
+    <div style="margin: 30px 0;">
+        <h3>Available Features (after authorization):</h3>
+        <ul style="text-align: left; display: inline-block;">
+            <li>Upload files to your Dropbox using POST requests</li>
+            <li>Create folders in your Dropbox using POST requests</li>
+            <li>Get your account information using POST requests</li>
+            <li>View API status and available methods</li>
+        </ul>
+    </div>
+    
+    <div style="margin: 30px 0;">
+        <h3>Technical Implementation:</h3>
+        <div class="method-info">
+            <p>This application uses Python Flask and the requests library to make POST calls to:</p>
+            <ul style="text-align: left;">
+                <li><code>https://api.dropboxapi.com/oauth2/token</code> - Token exchange</li>
+                <li><code>https://content.dropboxapi.com/2/files/upload</code> - File upload</li>
+                <li><code>https://api.dropboxapi.com/2/files/create_folder_v2</code> - Folder creation</li>
+                <li><code>https://api.dropboxapi.com/2/users/get_current_account</code> - Account info</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
+    <p><em>TIES4560 SOA and Cloud Computing - Task 2.2 Implementation</em></p>
+    <p><strong>Team:</strong> StudyStart JYU Group</p>
+</div>
+{% endblock %}
