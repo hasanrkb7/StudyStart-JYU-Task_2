@@ -85,16 +85,6 @@ def callback():
         flash(f'Error during token request: {str(e)}', 'error')
         return redirect(url_for('index'))
 
-
-# @app.route('/dashboard')
-# def dashboard():
-#     """Dashboard showing available POST operations"""
-#     if not access_token:
-#         flash('Please authorize first', 'error')
-#         return redirect(url_for('index'))
-#
-#     return render_template('dashboard.html')
-
 @app.route('/dashboard', defaults={'path': ''})
 @app.route('/dashboard/<path:path>')
 def dashboard(path):
