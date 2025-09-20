@@ -33,3 +33,4 @@ frontend/
 www/
 static/
 assets/
+__pycache__/*
