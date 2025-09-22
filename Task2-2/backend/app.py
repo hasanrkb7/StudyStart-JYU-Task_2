@@ -147,10 +147,16 @@ def upload_file():
 
     # Prepare file upload using POST request
     upload_url = "https://content.dropboxapi.com/2/files/upload"
+    
+    folder_path = request.form.get('folder', '').strip()
+    if folder_path:
+        target_path = f"{folder_path}/{file.filename}"
+    else:
+        target_path = f"/{file.filename}"
 
     # Dropbox API arguments (metadata)
     dropbox_api_arg = {
-        "path": f"/StudyStartJYU_uploads/{file.filename}",
+        "path": target_path,
         "mode": "add",
         "autorename": True,
         "mute": False,
@@ -205,7 +211,7 @@ def create_folder():
 
     # Request data for POST
     folder_data = {
-        "path": f"/StudyStartJYU_folders/{folder_name}",
+        "path": f"/{folder_name}",
         "autorename": True
     }
 
@@ -350,6 +356,34 @@ def rename():
         if response.status_code == 200:
             result = response.json()
             return jsonify({"message": f'Renamed to: {result["metadata"]["name"]}'})
+        else:
+            return jsonify({"error": response.text}), response.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+@app.route('/api/folders') #to get list of folders for drop menu
+def list_folders():
+    if not access_token:
+        return jsonify({"error": "Authorize"}), 401
+
+    url = "https://api.dropboxapi.com/2/files/list_folder"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "path": "",         
+        "recursive": True   
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code == 200:
+            entries = response.json().get("entries", [])
+            # Filter only folders
+            folders = [e["path_display"] for e in entries if e[".tag"] == "folder"]
+            return jsonify({"folders": folders})
         else:
             return jsonify({"error": response.text}), response.status_code
     except Exception as e:
